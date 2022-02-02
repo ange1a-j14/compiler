@@ -45,11 +45,6 @@ public class Scanner
         getNextChar();
     }
 
-    public static void main(String[] args)
-    {
-        FileInputStream inStream = new FileInputStream(new File("ScannerTest.txt"));
-        Scanner lex = new Scanner(inStream);
-    }
     /**
      * Sets currentChar to the next character in the input as long as there is another 
      * valid character to be read. If the end of file has been reached 
@@ -57,9 +52,9 @@ public class Scanner
      */
     private void getNextChar()
     {
-        int readVal;
         try 
         {
+            int readVal;
             readVal = in.read();
 
             if (readVal != -1 && readVal != '.')
@@ -73,7 +68,6 @@ public class Scanner
         } 
         catch (IOException e) 
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             System.exit(1);
         }
@@ -112,7 +106,7 @@ public class Scanner
     /**
      * Returns the next lexeme as a token. 
      * 
-     * @return lexeme found in input stream or "END" if end of file or period reached
+     * @return lexeme found in input stream or "eof" if end of file or period reached
      * @throws ScanErrorException if no lexeme recognized
      */
     public String nextToken() throws ScanErrorException
@@ -122,7 +116,7 @@ public class Scanner
             eat(currentChar);
         }
         if (!hasNext())
-            return "END";
+            return "eof";
         if (isDigit(currentChar))
             return scanNumber();
         else if (isLetter(currentChar))
@@ -178,10 +172,11 @@ public class Scanner
     private String scanNumber() throws ScanErrorException
     {
         String lexString = String.valueOf(currentChar);
+        eat(currentChar);
         while (hasNext() && isDigit(currentChar))
         {
-            eat(currentChar);
             lexString += String.valueOf(currentChar);
+            eat(currentChar);
         }
         return lexString;
     }
@@ -196,17 +191,18 @@ public class Scanner
     private String scanIdentifier() throws ScanErrorException
     {
         String lexString = String.valueOf(currentChar);
-        while (hasNext() && (isDigit(currentChar) || isDigit(currentChar)))
+        eat(currentChar);
+        while (hasNext() && (isLetter(currentChar) || isDigit(currentChar)))
         {
-            eat(currentChar);
             lexString += String.valueOf(currentChar);
+            eat(currentChar);
         }
         return lexString;
     }
 
     /**
      * Scans an operand defined by the regular expression 
-     * ['=' '+' '-' '*' '/' '%' '<' '>' ':' '(' ')' 
+     * ['=' '+' '-' '*' '/' '%' '<' '>' ':' '(' ')' ';' 
      *  '==' '+=' '-=' '*=' '%=' '<=' '>=' ':=' '!=' '<>'].
      * 
      * @return lexeme found in input stream
@@ -218,23 +214,12 @@ public class Scanner
         if (!(currentChar == '=' || currentChar == '+' || currentChar == '-' || 
                 currentChar == '*' || currentChar == '/' || currentChar == '%' || 
                 currentChar == '<' || currentChar == '>' || currentChar == ':' || 
-                currentChar == '(' || currentChar == ')'))
+                currentChar == '(' || currentChar == ')' || currentChar == ';'))
         {
-            throw new ScanErrorException("Unrecognized character encountered.");
+            throw new ScanErrorException("Unrecognized character encountered: " + currentChar);
         }
 
-        String lexString = String.valueOf(currentChar);
-
-        if (hasNext() && (currentChar == '=' || currentChar == '+' || currentChar == '-' || 
-                currentChar == '*' || currentChar == '%' || currentChar == '<' || 
-                currentChar == '>' || currentChar == ':' || currentChar == '!')) 
-        {
-            eat(currentChar);
-            if (currentChar == '=' || (lexString.charAt(0) == '<') && currentChar == '>')
-            {
-                lexString += currentChar; 
-            }
-        }
+        String lexString = "";
         if (hasNext() && currentChar == '/')
         {
             eat(currentChar);
@@ -245,6 +230,30 @@ public class Scanner
                 {
                     eat(currentChar);
                 }
+                return nextToken();
+            }
+            else 
+            {
+                lexString = "/";
+            }
+        }
+        else
+        {
+            lexString += String.valueOf(currentChar);
+            if (hasNext() && (currentChar == '=' || currentChar == '+' || currentChar == '-' || 
+                    currentChar == '*' || currentChar == '%' || currentChar == '<' || 
+                    currentChar == '>' || currentChar == ':' || currentChar == '!')) 
+            {
+                eat(currentChar);
+                if (currentChar == '=' || (lexString.charAt(0) == '<') && currentChar == '>')
+                {
+                    lexString += currentChar; 
+                    eat(currentChar);
+                }
+            }
+            else
+            {
+                eat(currentChar);
             }
         }
         return lexString;
