@@ -8,7 +8,7 @@ import java.io.*;
  * a given set of rules, and generating a stream of tokens. 
  * 
  * @author Angela Jia
- * @version January 24, 2022
+ * @version February 2, 2022
  */
 public class Scanner
 {
@@ -163,6 +163,21 @@ public class Scanner
     }
 
     /**
+     * Determines whether the given character is a valid operator or not.
+     * 
+     * @param inputChar the character to be checked
+     * 
+     * @return true if the input character is a valid operator; otherwise, false
+     */
+    public static boolean isOperator(char inputChar)
+    {
+        return (inputChar == '=' || inputChar == '+' || inputChar == '-' || 
+                inputChar == '*' || inputChar == '/' || inputChar == '%' || 
+                inputChar == '<' || inputChar == '>' || inputChar == ':' || 
+                inputChar == '(' || inputChar == ')' || inputChar == ';');
+    }
+
+    /**
      * Scans a number defined by the regular expression (digit)(digit)*.
      * 
      * @return lexeme found in input stream
@@ -211,10 +226,7 @@ public class Scanner
      */
     private String scanOperand() throws ScanErrorException
     {
-        if (!(currentChar == '=' || currentChar == '+' || currentChar == '-' || 
-                currentChar == '*' || currentChar == '/' || currentChar == '%' || 
-                currentChar == '<' || currentChar == '>' || currentChar == ':' || 
-                currentChar == '(' || currentChar == ')' || currentChar == ';'))
+        if (!isOperator(currentChar))
         {
             throw new ScanErrorException("Unrecognized character encountered: " + currentChar);
         }
