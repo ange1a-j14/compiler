@@ -9,7 +9,7 @@ public class ScannerTester {
    
    public static void main(String[] args) throws FileNotFoundException, IOException
     {
-    	FileReader inStream = new FileReader("OthelloPlay.txt");
+    	FileReader inStream = new FileReader("othello/OthelloPlay.txt");
         Scanner lex = new Scanner(inStream);
         while (! lex.yyatEOF()) 
         {

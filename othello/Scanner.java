@@ -7,7 +7,7 @@ package othello;
 * This file defines a simple lexer for the compilers course 2022.
 * It is primarily meant to scan a text of Shakespeare's play Othello.
 * It parses stage cues, dates, version numbers, acts, scenes, 
-* major characters, words, and punctuation as lexemes. 
+* major characters, words, section breaks, and punctuation as lexemes. 
 *
 * @author Clarice Wang
 * @author Angela Jia
@@ -77,10 +77,11 @@ public class Scanner {
   private static final String ZZ_CMAP_BLOCKS_PACKED_0 =
     "\11\0\1\1\1\2\1\3\1\1\1\4\22\0\1\5"+
     "\2\6\4\0\1\7\4\0\1\10\1\6\1\11\1\0"+
-    "\12\12\2\6\3\0\1\6\1\0\1\13\1\14\1\15"+
-    "\17\14\1\16\1\17\6\14\1\20\1\0\1\21\3\0"+
-    "\2\22\1\23\1\22\1\24\10\22\1\25\14\22\1\0"+
-    "\1\6\10\0\1\3\u01a2\0\2\3\326\0\u0100\3";
+    "\12\12\2\6\1\0\1\13\1\0\1\6\1\0\1\14"+
+    "\1\15\1\16\17\15\1\17\1\20\6\15\1\21\1\0"+
+    "\1\22\3\0\2\23\1\24\1\23\1\25\10\23\1\26"+
+    "\14\23\1\0\1\6\10\0\1\3\u01a2\0\2\3\326\0"+
+    "\u0100\3";
 
   private static int [] zzUnpackcmap_blocks() {
     int [] result = new int[1024];
@@ -107,13 +108,13 @@ public class Scanner {
   private static final int [] ZZ_ACTION = zzUnpackAction();
 
   private static final String ZZ_ACTION_PACKED_0 =
-    "\1\0\3\1\1\2\1\1\1\2\3\3\1\1\1\3"+
-    "\1\0\1\4\1\0\1\3\2\5\2\3\1\0\1\6"+
-    "\1\3\1\0\1\5\1\0\2\3\3\0\1\3\1\5"+
-    "\1\7\1\0\1\3\2\0\1\10\1\11";
+    "\1\0\3\1\1\2\1\1\1\2\1\3\3\4\1\1"+
+    "\1\4\1\0\1\5\1\0\1\4\2\6\2\4\1\0"+
+    "\1\7\1\4\1\0\1\6\1\0\2\4\3\0\1\4"+
+    "\1\6\1\10\1\0\1\4\2\0\1\11\1\12";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[40];
+    int [] result = new int[41];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -138,14 +139,15 @@ public class Scanner {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\26\0\54\0\102\0\130\0\156\0\204\0\232"+
-    "\0\260\0\306\0\334\0\362\0\102\0\102\0\156\0\u0108"+
-    "\0\u011e\0\u0134\0\u014a\0\u0160\0\334\0\26\0\u0176\0\u018c"+
-    "\0\u01a2\0\u01b8\0\u01ce\0\u01e4\0\u01fa\0\u0210\0\u0226\0\u023c"+
-    "\0\u01fa\0\u0252\0\u0268\0\u027e\0\u0294\0\u02aa\0\u0294\0\u02c0";
+    "\0\0\0\27\0\56\0\105\0\134\0\163\0\212\0\241"+
+    "\0\270\0\317\0\346\0\375\0\u0114\0\105\0\105\0\163"+
+    "\0\u012b\0\u0142\0\u0159\0\u0170\0\u0187\0\375\0\27\0\u019e"+
+    "\0\u01b5\0\u01cc\0\u01e3\0\u01fa\0\u0211\0\u0228\0\u023f\0\u0256"+
+    "\0\u026d\0\u0228\0\u0284\0\u029b\0\u02b2\0\u02c9\0\u02e0\0\u02c9"+
+    "\0\u02f7";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[40];
+    int [] result = new int[41];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -169,32 +171,33 @@ public class Scanner {
 
   private static final String ZZ_TRANS_PACKED_0 =
     "\3\2\1\0\1\3\1\4\1\5\1\6\1\5\1\7"+
-    "\1\4\1\10\2\11\1\12\1\11\1\13\1\2\4\14"+
-    "\30\0\1\2\30\0\1\15\3\0\1\15\1\16\21\0"+
-    "\1\5\1\0\2\5\23\0\1\17\3\0\5\14\2\0"+
-    "\4\14\5\0\1\15\1\5\1\0\1\5\1\7\1\16"+
-    "\22\0\1\20\3\0\2\21\1\22\2\21\2\0\4\23"+
-    "\7\0\1\20\3\0\5\21\2\0\4\23\7\0\1\20"+
-    "\3\0\5\21\2\0\1\23\1\24\2\23\1\0\2\25"+
-    "\1\0\3\25\1\0\10\25\1\0\1\26\4\25\7\0"+
-    "\1\20\3\0\5\14\2\0\4\14\7\0\1\20\3\0"+
-    "\5\27\2\0\4\27\5\0\1\30\1\0\1\20\3\0"+
-    "\5\21\2\0\4\14\5\0\1\30\1\0\1\20\3\0"+
-    "\4\21\1\31\2\0\4\14\5\0\1\32\1\0\1\20"+
-    "\3\0\5\14\2\0\4\23\5\0\1\32\1\0\1\20"+
-    "\3\0\5\14\2\0\2\23\1\33\1\23\7\0\1\34"+
-    "\3\0\5\27\2\0\4\27\13\0\5\35\13\0\1\36"+
-    "\1\0\1\20\3\0\5\21\2\0\4\14\12\0\1\37"+
-    "\20\0\1\32\1\0\1\20\3\0\5\14\2\0\3\23"+
-    "\1\40\7\0\1\34\31\0\5\41\20\0\1\42\5\35"+
-    "\16\0\1\43\1\0\1\37\20\0\1\32\1\0\1\20"+
-    "\3\0\5\14\2\0\2\23\1\44\1\23\12\0\1\42"+
-    "\20\0\1\45\25\0\1\46\1\0\1\20\3\0\5\14"+
-    "\2\0\4\23\12\0\1\47\25\0\1\50\23\0\1\43"+
-    "\1\0\1\50\13\0";
+    "\1\4\1\10\1\11\2\12\1\13\1\12\1\14\1\2"+
+    "\4\15\31\0\1\2\31\0\1\16\3\0\1\16\1\17"+
+    "\22\0\1\5\1\0\2\5\24\0\1\20\4\0\5\15"+
+    "\2\0\4\15\5\0\1\16\1\5\1\0\1\5\1\7"+
+    "\1\17\27\0\1\10\22\0\1\21\4\0\2\22\1\23"+
+    "\2\22\2\0\4\24\7\0\1\21\4\0\5\22\2\0"+
+    "\4\24\7\0\1\21\4\0\5\22\2\0\1\24\1\25"+
+    "\2\24\1\0\2\26\1\0\3\26\1\0\3\26\1\0"+
+    "\5\26\1\0\1\27\4\26\7\0\1\21\4\0\5\15"+
+    "\2\0\4\15\7\0\1\21\4\0\5\30\2\0\4\30"+
+    "\5\0\1\31\1\0\1\21\4\0\5\22\2\0\4\15"+
+    "\5\0\1\31\1\0\1\21\4\0\4\22\1\32\2\0"+
+    "\4\15\5\0\1\33\1\0\1\21\4\0\5\15\2\0"+
+    "\4\24\5\0\1\33\1\0\1\21\4\0\5\15\2\0"+
+    "\2\24\1\34\1\24\7\0\1\35\4\0\5\30\2\0"+
+    "\4\30\14\0\5\36\13\0\1\37\1\0\1\21\4\0"+
+    "\5\22\2\0\4\15\12\0\1\40\21\0\1\33\1\0"+
+    "\1\21\4\0\5\15\2\0\3\24\1\41\7\0\1\35"+
+    "\33\0\5\42\20\0\1\43\1\0\5\36\16\0\1\44"+
+    "\1\0\1\40\21\0\1\33\1\0\1\21\4\0\5\15"+
+    "\2\0\2\24\1\45\1\24\12\0\1\43\21\0\1\46"+
+    "\26\0\1\47\1\0\1\21\4\0\5\15\2\0\4\24"+
+    "\12\0\1\50\26\0\1\51\24\0\1\44\1\0\1\51"+
+    "\14\0";
 
   private static int [] zzUnpackTrans() {
-    int [] result = new int[726];
+    int [] result = new int[782];
     int offset = 0;
     offset = zzUnpackTrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -237,12 +240,12 @@ public class Scanner {
   private static final int [] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
-    "\1\0\1\11\12\1\1\0\1\1\1\0\5\1\1\0"+
+    "\1\0\1\11\13\1\1\0\1\1\1\0\5\1\1\0"+
     "\1\11\1\1\1\0\1\1\1\0\2\1\3\0\3\1"+
     "\1\0\1\1\2\0\2\1";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[40];
+    int [] result = new int[41];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -714,47 +717,52 @@ public class Scanner {
             { /* do nothing */
             }
             // fall through
-          case 10: break;
+          case 11: break;
           case 2:
             { return "punctuation: " + yytext();
             }
             // fall through
-          case 11: break;
-          case 3:
-            { return "word: " + yytext();
-            }
-            // fall through
           case 12: break;
-          case 4:
-            { return "version: " + yytext();
+          case 3:
+            { return "section break: " + yytext();
             }
             // fall through
           case 13: break;
-          case 5:
-            { return "major character: " + yytext();
+          case 4:
+            { return "word: " + yytext();
             }
             // fall through
           case 14: break;
-          case 6:
-            { return "stage cue: " + yytext();
+          case 5:
+            { return "version: " + yytext();
             }
             // fall through
           case 15: break;
-          case 7:
-            { return "act: " + yytext();
+          case 6:
+            { return "major character: " + yytext();
             }
             // fall through
           case 16: break;
-          case 8:
-            { return "date: " + yytext();
+          case 7:
+            { return "stage cue: " + yytext();
             }
             // fall through
           case 17: break;
-          case 9:
-            { return "scene: " + yytext();
+          case 8:
+            { return "act: " + yytext();
             }
             // fall through
           case 18: break;
+          case 9:
+            { return "date: " + yytext();
+            }
+            // fall through
+          case 19: break;
+          case 10:
+            { return "scene: " + yytext();
+            }
+            // fall through
+          case 20: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

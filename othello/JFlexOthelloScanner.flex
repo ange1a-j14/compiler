@@ -3,7 +3,7 @@ package othello;
 * This file defines a simple lexer for the compilers course 2022.
 * It is primarily meant to scan a text of Shakespeare's play Othello.
 * It parses stage cues, dates, version numbers, acts, scenes, 
-* major characters, words, and punctuation as lexemes. 
+* major characters, words, section breaks, and punctuation as lexemes. 
 *
 * @author Clarice Wang
 * @author Angela Jia
@@ -45,7 +45,7 @@ Scene = "Scene "[0-9]+
 /**
  * Lexical rules:
  * Parses stage cues, dates, version numbers, acts, scenes, 
- * major characters, words, and punctuation.
+ * major characters, words, punctuation, and section breaks.
  * @return the identifier name and lexeme.
  */
 {StageCue} {return "stage cue: " + yytext();}
@@ -54,6 +54,7 @@ Scene = "Scene "[0-9]+
 {Act} {return "act: " + yytext();}
 {Scene} {return "scene: " + yytext();}
 [A-Z][A-Z]+|([A-Z][A-Z]+" "[A-Z][A-Z]+)  {return "major character: " + yytext();}
+("=")+ {return "section break: " + yytext();}
 ("'")*[a-zA-Z]+("'")*[a-zA-Z]*("'")* {return "word: " + yytext();}
 {Punctuation}+ {return "punctuation: " + yytext();}
 {WhiteSpace} {/* do nothing */}
