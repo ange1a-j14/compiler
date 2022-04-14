@@ -12,7 +12,7 @@ public class ParserTester
    
    public static void main(String[] args) throws FileNotFoundException, ScanErrorException
    {
-      FileInputStream inStream = new FileInputStream("parserTest4.txt");
+      FileInputStream inStream = new FileInputStream("parserTest6.txt");
       Scanner scanner = new Scanner(inStream);
       Parser parser = new Parser(scanner);
       while (scanner.hasNext())

@@ -1,8 +1,21 @@
 package parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import ast.Assignment;
+import ast.BinOp;
+import ast.Block;
+import ast.Condition;
+import ast.Expression;
+import ast.If;
+import ast.Number;
+import ast.Statement;
+import ast.Variable;
+import ast.While;
+import ast.Writeln;
 import scanner.ScanErrorException;
 import scanner.Scanner;
 
@@ -45,6 +58,7 @@ public class Parser
       if (expected.equals(currToken))
       {
          currToken = scanner.nextToken();
+         System.out.println(currToken);
       }
       else
       {
@@ -60,17 +74,16 @@ public class Parser
     * @postcondition number token has been eaten 
     * @return the value of the parsed integer
     */
-   private int parseNumber() throws ScanErrorException
+   private int parseNumber(String n) throws ScanErrorException
    {
-      int num = Integer.parseInt(currToken);
-      eat(currToken);
+      int num = Integer.parseInt(n);
       return num;
    }
 
    /**
     * Parses a program of statements, containing WRITELN, BEGIN, END, and variable statements, and prints the values to be written. 
     * Follows the grammar below. 
-    * stmt -> WRITELN(expr); | BEGIN whilebegin | id := expr;
+    * stmt -> WRITELN(expr); | BEGIN whilebegin | id := expr; | IF cond THEN stmt | WHILE cond DO stmt
     * whilebegin -> END; | stmt whilebegin
     * stmts -> stmts stmt | epsilon
     * expr -> term whileexpr
@@ -79,74 +92,72 @@ public class Parser
     * @throws ScanErrorException if the current token does not match the expected token
     *
     */
-    public void parseStatement() throws ScanErrorException
+    public Statement parseStatement() throws ScanErrorException
     {
-        eat("BEGIN");
-        while (!currToken.equals("END"))
+        Statement stmt;
+        if (currToken.equals("BEGIN"))
         {
-            if (currToken.equals("BEGIN"))
+            List<Statement> stmts = new ArrayList<Statement>();
+            eat("BEGIN");
+            while (!currToken.equals("END"))
             {
-                parseStatement();
+                stmts.add(parseStatement());
             }
-            else if (currToken.equals("WRITELN"))
-            {
-                eat("WRITELN");
-                eat("(");
-                while (!currToken.equals(")"))
-                {
-                    int expr = parseTerm();
-                    while (currToken.equals("+") || currToken.equals("-"))
-                    {
-                        if (currToken.equals("+"))
-                        {
-                            eat("+");
-                            expr += parseTerm();
-                        }
-                        else 
-                        {
-                            eat("-");
-                            expr -= parseTerm();
-                        }
-                    }
-                    System.out.println(expr);
-                    
-                }
-                eat(")");
-                eat(";");            
-            }
-            else // variable statement 
-            {
-                String varName = currToken;
-                eat(varName);
-                eat(":=");
-                int varVal = parseTerm();
-                while (currToken.equals("+") || currToken.equals("-"))
-                {
-                    if (currToken.equals("+"))
-                    {
-                        eat("+");
-                        varVal += parseTerm();
-                    }
-                    else
-                    {
-                        eat("-");
-                        varVal -= parseTerm();
-                    }
-                }
-                if (map.get(varName) == null)
-                {
-                    map.put(varName, varVal);
-                }
-                else
-                {
-                    map.replace(varName, varVal);
-                }
-                eat(";");
-            }
+            eat("END");
+            eat(";");
+            stmt = new Block(stmts);
         }
-        eat("END");
-        eat(";");
+        else if (currToken.equals("WRITELN"))
+        {
+            eat("WRITELN");
+            eat("(");
+            Expression expr = parseExpression();
+            eat(")");
+            eat(";");
+            stmt = new Writeln(expr);            
+        }
+        else if (currToken.equals("IF"))
+        {
+            eat("IF");
+            Condition cond = parseCondition();
+            eat("THEN");
+            Statement thens = parseStatement();
+            stmt = new If(cond, thens);
+        }
+        else if (currToken.equals("WHILE"))
+        {
+            eat("WHILE");
+            Condition cond = parseCondition();
+            eat("DO");
+            Statement whiles = parseStatement();
+            stmt = new While(cond, whiles);
+        }
+        else // variable statement 
+        {
+            String varName = currToken;
+            eat(varName);
+            eat(":=");
+            Expression expr = parseExpression();
+            eat(";");
+            stmt = new Assignment(varName, expr);
+        }
+        return stmt;
     }
+
+    /**
+     * Parses a condition. 
+     * 
+     * @return the Condition parsed from the source file
+     * @throws ScanErrorException
+     */
+    private Condition parseCondition() throws ScanErrorException
+    {
+        Expression exp1 = parseExpression();
+        String relop = currToken;
+        eat(relop);
+        Expression exp2 = parseExpression();
+        return new Condition(exp1, exp2, relop);
+    } 
 
     /**
      * Parses a factor following the below grammar.
@@ -161,50 +172,33 @@ public class Parser
      * @return the value of the current factor
      * @throws ScanErrorException
      */
-    private int parseFactor() throws ScanErrorException
+    private Expression parseFactor() throws ScanErrorException
     {
         if (currToken.equals("-"))
         {
             eat("-");
-            return -1*parseFactor();
+            Expression negone = new Number(-1);
+            return new BinOp("*", negone, parseFactor());
         }
         if (currToken.equals("("))
         {
             eat("(");
-            int num = parseFactor();
-            if (currToken.equals("*"))
-            {
-                eat("*");
-                num *= parseFactor();
-            }
-            if (currToken.equals("/"))
-            {
-                eat("/");
-                num /= parseFactor();
-            }
-            if (currToken.equals("+"))
-            {
-                eat("+");
-                num += parseFactor();
-            }
-            if (currToken.equals("-"))
-            {
-                eat("-");
-                num -= parseFactor();
-            }
+            Expression expr = parseExpression();
             eat(")");
-            return num;
+            return expr;
         }
         try 
         {
-            Integer.parseInt(currToken);
-            return parseNumber();
+            String val = currToken;
+            Integer.parseInt(val);
+            eat(currToken);
+            return new Number(parseNumber(val));
         } 
         catch (Exception e) 
         {
             String varName = currToken;
             eat(currToken);
-            return map.get(varName);
+            return new Variable(varName);
         }
     }
 
@@ -220,23 +214,47 @@ public class Parser
      * @return the value of the term
      * @throws ScanErrorException
      */
-    private int parseTerm() throws ScanErrorException
+    private Expression parseTerm() throws ScanErrorException
     {
-        int term = parseFactor();
+        Expression term = parseFactor();
         while (currToken.equals("*") || currToken.equals("/"))
         {
             if (currToken.equals("*"))
             {
                 eat("*");
-                term *= parseFactor();
+                term = new BinOp("*", term, parseFactor());
             }
             else 
             {
                 eat("/");
-                term /= parseFactor();
+                term = new BinOp("/", term, parseFactor());
             }
         }
         return term;
+    }
+
+    private Expression parseExpression() throws ScanErrorException
+    {
+        Expression expr = parseTerm();
+        while (currToken.equals("+") || currToken.equals("-"))
+        {
+            if (currToken.equals("+"))
+            {
+                eat("+");
+                expr = new BinOp("+", expr, parseTerm());
+            }
+            else 
+            {
+                eat("-");
+                expr = new BinOp("-", expr, parseTerm());
+            }
+        }
+        return expr;
+    }
+
+    public String getCurrToken()
+    {
+       return currToken;
     }
 
 }
