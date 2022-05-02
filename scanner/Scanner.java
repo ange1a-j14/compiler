@@ -174,7 +174,8 @@ public class Scanner
         return (inputChar == '=' || inputChar == '+' || inputChar == '-' || 
                 inputChar == '*' || inputChar == '/' || inputChar == '%' || 
                 inputChar == '<' || inputChar == '>' || inputChar == ':' || 
-                inputChar == '(' || inputChar == ')' || inputChar == ';');
+                inputChar == '(' || inputChar == ')' || inputChar == ';' ||
+                inputChar == ',');
     }
 
     /**
