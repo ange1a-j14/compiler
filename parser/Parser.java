@@ -12,6 +12,9 @@ import ast.Condition;
 import ast.Expression;
 import ast.If;
 import ast.Number;
+import ast.ProcedureCall;
+import ast.ProcedureDeclaration;
+import ast.Program;
 import ast.Statement;
 import ast.Variable;
 import ast.While;
@@ -80,6 +83,49 @@ public class Parser
       return num;
    }
 
+   /**
+    * Parses a program by parsing procedure declarations while the current token is PROCEDURE.
+    * Then parses a single statement. 
+    * Follows the grammar below:
+    *
+    * program → PROCEDURE id ( maybeparms ) ; stmt program | stmt . maybeparms → parms | ε
+    * parms → parms , id | id
+    * stmt →WRITELN(expr);|BEGINstmtsEND;|id:=expr;
+    * IF cond THEN stmt | WHILE cond DO stmt stmts → stmts stmt | ε
+    * expr → expr+term | expr-term | term
+    * term → term * factor | term / factor | factor
+    * factor →(expr)|-factor |num|id(maybeargs)|id maybeargs → args | ε
+    * args → args , expr | expr
+    * cond → expr relop expr
+    * relop →=|<>|<|>|<=|>=
+    *
+    * @return a program
+    */
+   public Program parseProgram() throws ScanErrorException
+   {
+        List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
+        while (currToken.equals("PROCEDURE"))
+        {
+            eat("PROCEDURE");
+            String name = currToken;
+            eat(name);
+            eat("(");
+            List<String> params = new ArrayList<String>();
+            while (!currToken.equals(")"))
+            {
+                params.add(currToken);
+                eat(currToken);
+                if (currToken.equals(",")) eat(",");
+            }
+            eat(")");
+            eat(";");
+            Statement stmt = parseStatement();
+            procedures.add(new ProcedureDeclaration(name, stmt, params));
+        }
+        Statement progStatement = parseStatement();
+        return new Program(procedures, progStatement);
+   }
+   
    /**
     * Parses a program of statements, containing WRITELN, BEGIN, END, and variable statements, and prints the values to be written. 
     * Follows the grammar below. 
@@ -198,6 +244,18 @@ public class Parser
         {
             String varName = currToken;
             eat(currToken);
+            if (currToken.equals("("))
+            {
+                eat("(");
+                List<Expression> args = new ArrayList<Expression>();
+                while (!currToken.equals(")"))
+                {
+                    args.add(parseExpression());
+                    if (currToken.equals(",")) eat(",");
+                }
+                eat(")");
+                return new ProcedureCall(varName, args);
+            }
             return new Variable(varName);
         }
     }
