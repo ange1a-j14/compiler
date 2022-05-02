@@ -90,14 +90,16 @@ public class Parser
     *
     * program → PROCEDURE id ( maybeparms ) ; stmt program | stmt . maybeparms → parms | ε
     * parms → parms , id | id
-    * stmt →WRITELN(expr);|BEGINstmtsEND;|id:=expr;
-    * IF cond THEN stmt | WHILE cond DO stmt stmts → stmts stmt | ε
+    * stmt → WRITELN(expr); | BEGIN stmts END; | id:=expr; |
+    *           | IF cond THEN stmt | WHILE cond DO stmt 
+    * stmts → stmts stmt | ε
     * expr → expr+term | expr-term | term
     * term → term * factor | term / factor | factor
-    * factor →(expr)|-factor |num|id(maybeargs)|id maybeargs → args | ε
+    * factor → (expr)| -factor | num | id(maybeargs) | id 
+    * maybeargs → args | ε
     * args → args , expr | expr
     * cond → expr relop expr
-    * relop →=|<>|<|>|<=|>=
+    * relop → =|<>|<|>|<=|>=
     *
     * @return a program
     */
@@ -265,7 +267,7 @@ public class Parser
      * following the below grammar. 
      * term -> factor whileterm
      * whileterm -> * factor whileterm | / factor whileterm | epsilon
-     * factor -> (term) | -factor | num | id
+     * factor -> (term) | -factor | num | id | id (maybeargs)
      * 
      * @precondition current token is a factor
      * @postcondition term tokens have been eaten
