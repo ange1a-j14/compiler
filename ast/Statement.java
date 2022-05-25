@@ -17,4 +17,14 @@ public abstract class Statement
      * @param env the given environment
      */
     public abstract void exec(Environment env);
+
+    /**
+     * Compiles a statement into MIPS code.
+     * 
+     * @param e the emitter used to output the code
+     */
+    public void compile(Emitter e)
+    {
+        throw new RuntimeException("Implement me!");
+    }
 }

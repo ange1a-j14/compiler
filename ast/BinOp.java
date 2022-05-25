@@ -56,4 +56,31 @@ public class BinOp extends Expression
         }
 
     }
+
+    /**
+     * Compiles the binary operation in MIPS.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        exp1.compile(e);
+        e.emitPush("$v0");
+        exp2.compile(e);
+        e.emitPop("$t0");
+        if (op.equals("+")) e.emit("addu $v0 $t0 $v0");
+        else if (op.equals("-")) e.emit("subu $v0 $t0 $v0");
+        else if (op.equals("*"))
+        {
+            e.emit("mult $v0 $t0");
+            e.emit("mflo $v0");
+        }
+        else if (op.equals("/"))
+        {
+            e.emit("div $v0 $t0");
+            e.emit("mflo $v0");
+        }
+
+    }
 }

@@ -37,4 +37,21 @@ public class While extends Statement
             stmts.exec(env);
         }
     }
+
+    /**
+     * Compiles the while loop in MIPS and creates an empty endWhile block.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        String loop = "loop" + e.nextLabelID();
+        e.emit(loop + ":");
+        String endWhile = "endw" + e.nextLabelID();
+        cond.compile(e, endWhile);
+        stmts.compile(e);
+        e.emit("j " + loop);
+        e.emit(endWhile + ":");
+    }
 }

@@ -38,4 +38,18 @@ public class Block extends Statement
         }
     }
 
+    /**
+     * Compiles the block of statements in MIPS.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        for (Statement stmt : stmts)
+        {
+            stmt.compile(e);
+        }
+    }
+
 }

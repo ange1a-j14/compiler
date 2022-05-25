@@ -35,4 +35,16 @@ public class Assignment extends Statement
     {
         env.setVariable(var, exp.eval(env));
     }
+
+    /**
+     * Compiles the assignment in MIPS.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        exp.compile(e);
+        e.emit("sw $v0 " + "var" + var + "      # set variable value");
+    }
 }

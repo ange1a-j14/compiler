@@ -84,8 +84,9 @@ public class Parser
    }
 
    /**
-    * Parses a program by parsing procedure declarations while the current token is PROCEDURE.
-    * Then parses a single statement. 
+    * Parses a program by first parsing global variable declarations,
+    * then parsing procedure declarations while the current token is PROCEDURE,
+    * and then parsing a single statement. 
     * Follows the grammar below:
     *
     * program → PROCEDURE id ( maybeparms ) ; stmt program | stmt . maybeparms → parms | ε
@@ -105,6 +106,19 @@ public class Parser
     */
    public Program parseProgram() throws ScanErrorException
    {
+        List<String> globalVars = new ArrayList<String>();
+        while (currToken.equals("VAR"))
+        {
+            eat("VAR");
+            while (!currToken.equals(";"))
+            {
+                String currVarname = currToken;
+                eat(currVarname);
+                globalVars.add(currVarname);
+                if (currToken.equals(",")) eat(",");
+            }
+            eat(";");
+        }
         List<ProcedureDeclaration> procedures = new ArrayList<ProcedureDeclaration>();
         while (currToken.equals("PROCEDURE"))
         {
@@ -125,7 +139,7 @@ public class Parser
             procedures.add(new ProcedureDeclaration(name, stmt, params));
         }
         Statement progStatement = parseStatement();
-        return new Program(procedures, progStatement);
+        return new Program(globalVars, procedures, progStatement);
    }
    
    /**

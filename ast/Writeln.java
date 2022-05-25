@@ -32,4 +32,21 @@ public class Writeln extends Statement
     {
         System.out.println(exp.eval(env));
     }
+
+    /**
+     * Compiles the Writeln instruction in MIPS.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        exp.compile(e);
+        e.emit("move $a0 $v0");
+        e.emit("li $v0 1");
+        e.emit("syscall");
+        e.emit("la $a0 nl");
+        e.emit("li $v0 4");
+        e.emit("syscall     # print expression and move to new line");
+    }
 }

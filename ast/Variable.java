@@ -34,4 +34,17 @@ public class Variable extends Expression
     {
         return env.getVariable(name);
     }
+
+    /**
+     * Compiles the variable in MIPS, adding 'var' to the variable name
+     * to prevent ambiguous naming.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        e.emit("la $t0 " + "var" + name);
+        e.emit("lw $v0 ($t0)        # load variable");
+    }
 }

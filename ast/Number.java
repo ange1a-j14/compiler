@@ -34,4 +34,15 @@ public class Number extends Expression
     {
         return value;
     }
+
+    /**
+     * Compiles the Number in MIPS.
+     * 
+     * @param e the emitter used to write MIPS code
+     */
+    @Override
+    public void compile(Emitter e)
+    {
+        e.emit("li $v0 " + value);
+    }
 }

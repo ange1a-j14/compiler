@@ -17,4 +17,14 @@ public abstract class Expression
      * @return the integer value of the expression 
      */
     public abstract int eval(Environment env);
+
+    /**
+     * Compiles an expression into MIPS code.
+     * 
+     * @param e the emitter used to output the code
+     */
+    public void compile(Emitter e)
+    {
+        throw new RuntimeException("Implement me!");
+    }
 }
